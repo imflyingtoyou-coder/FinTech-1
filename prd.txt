@@ -1,0 +1,164 @@
+Product Requirements Document (PRD) – MVP
+Project Title: Invoice Bank Verification Web App (Minimum Viable Product)
+Version: 1.0
+Date: October 2025
+
+1. Overview
+
+This document defines the Minimum Viable Product (MVP) version of the Invoice Bank Verification Web App.
+The MVP focuses on validating the core concept — allowing users to verify bank account details via invoice numbers — with the simplest
+possible implementation using Node.js, Express, PostgreSQL, and EJS. Non-essential features such as authentication and API integrations are intentionally deferred.
+
+Problem Statement:
+In international trade, payments are often made via wire transfer based on invoice details received through email or shared documents. However, these communications are vulnerable to interception and tampering. Fraudsters may alter bank account details in invoices, leading to funds being wired to the wrong account. Businesses need a reliable way to verify that the bank account information associated with a given invoice number is valid and correct.
+
+Solution Summary:
+This web application enables users to verify bank account details by searching for an invoice number. The system returns the verified bank name and bank account number registered for that invoice. This reduces the risk of wire transfer fraud and enhances trust in cross-border transactions.
+
+Target Users:
+- Import/export companies and finance teams processing international payments.
+- Internal accounting and compliance staff who verify invoice payment details.
+- Trade agents and intermediaries who need to cross-check bank data before wiring funds.
+
+Value Proposition:
+- Prevent financial loss due to invoice fraud.
+- Provide an easy-to-use verification platform accessible via the web.
+- Improve confidence in international wire transfers.
+
+2. Goals and Non-Goals
+
+Goals (MVP):
+1. Allow an authorized admin to register invoice records containing:
+   - Invoice number
+   - Bank name
+   - Bank account number
+   - Optional reference details (e.g., beneficiary name, currency)
+2. Allow users to search by invoice number and retrieve the associated bank details.
+3. Display a clear “Verified” message and the stored bank details.
+4. Log all verification requests with timestamps and IP addresses.
+5. Provide a simple and secure web interface using EJS templates and vanilla JavaScript.
+
+Non-Goals:
+- No user authentication or login system in MVP (can be added later).
+- No automatic validation via SWIFT or IBAN databases in MVP.
+- No integration with financial institutions’ APIs.
+- No multilingual support in the initial version.
+
+3. User Stories and Use Cases
+
+Admin Flow (Data Registration):
+- As an admin, I can visit an /admin page and submit a form to register a new invoice with its bank details.
+- As an admin, I can update or delete invoice records if errors are found.
+- As an admin, I can view all invoices currently stored in the database.
+
+User Flow (Verification Search):
+- As a user, I can go to the homepage, enter an invoice number into a search bar, and submit.
+- The system retrieves the matching record from the database and displays:
+  - Bank Name
+  - Bank Account Number
+  - Verification status message
+- If no record is found, display a clear “Invoice not found or not yet registered” message.
+- Each search is logged for auditing and security monitoring.
+
+Error Handling:
+- If the server or database is unavailable, show a friendly error message: “Service temporarily unavailable. Please try again later.”
+- Handle invalid inputs (e.g., special characters in invoice numbers) gracefully.
+
+4. Functional Requirements
+
+Core Features:
+1. Invoice Registration Form – accessible via /admin/new
+   - Input fields: invoice number, bank name, bank account number
+   - POST request to /admin/create
+   - Data validation (non-empty fields, valid characters)
+2. Invoice Search
+   - Input field on homepage /
+   - GET request to /verify?invoice=XXXX
+   - Response rendered on /result
+3. Logs
+   - Each verification request (invoice number + timestamp + user IP) stored in the verification_logs table.
+4. Error Pages
+   - 404.ejs for missing pages
+   - 500.ejs for server errors
+5. Security
+   - Validate and sanitize all user inputs.
+   - Use parameterized SQL queries to prevent SQL injection.
+   - Limit admin routes to a specific environment variable–based secret key.
+
+5. Data Model (PostgreSQL)
+
+Tables:
+
+1. invoices
+   - id (PK, serial)
+   - invoice_number (varchar, unique)
+   - bank_name (varchar)
+   - bank_account_number (varchar)
+   - beneficiary_name (varchar, optional)
+   - created_at (timestamp)
+   - updated_at (timestamp)
+
+2. verification_logs
+   - id (PK, serial)
+   - invoice_number (varchar)
+   - ip_address (varchar)
+   - verified_at (timestamp)
+
+6. System Architecture
+
+Stack Overview:
+- Node.js with Express for routing and business logic.
+- PostgreSQL for persistent storage.
+- EJS for server-side rendering of dynamic HTML pages.
+- Vanilla JavaScript for client-side interactivity (form submission, input validation).
+
+Flow:
+1. User submits invoice number via browser.
+2. Express server receives request and queries PostgreSQL.
+3. If a match is found, server renders result.ejs with bank details.
+4. Verification log is inserted into verification_logs.
+5. If not found, result.ejs displays “Invoice not found” message.
+
+7. Security Considerations
+
+- All SQL queries must use parameterized statements.
+- Input validation on both client and server.
+- Rate-limiting or CAPTCHA (future enhancement) to prevent brute-force queries.
+- Admin route (/admin) protected by an environment variable–based secret or a temporary access key.
+- HTTPS enforced at hosting level (Vercel and Railway support SSL/TLS).
+- Error messages should not reveal internal database or system details.
+
+8. Deployment Plan
+
+Backend + Database:
+- Host Node.js/Express app and PostgreSQL database on Railway.
+- Use environment variables for DB connection (DATABASE_URL, ADMIN_KEY, etc.).
+
+Frontend:
+- Static EJS-rendered pages hosted on Vercel via Git integration.
+- Build command: none required; use serverless function integration for dynamic routes if needed.
+
+Continuous Deployment:
+- Git push triggers automatic redeploys on Railway and Vercel.
+- Test database migrations using Railway CLI before each deploy.
+
+9. Future Enhancements
+
+1. User authentication for secure admin access.
+2. Integration with SWIFT / IBAN / Open Banking APIs for real-time validation.
+3. Role-based access control (viewer vs admin).
+4. REST API endpoint for external systems to verify invoices programmatically.
+5. Dashboard for search analytics and fraud detection patterns.
+6. Multi-language support.
+
+10. Success Metrics
+
+- 99% uptime on Railway and Vercel.
+- Search response time under 500ms.
+- 95%+ accuracy rate for invoice-bank mapping.
+- At least 100 verification searches per week within 3 months of launch.
+- Zero reported incidents of misdirected wire transfers due to unverified data.
+
+The purpose of this MVP is to validate user demand and core functionality before scaling to a production-grade platform.
+
+End of Document

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">🏦 Invoice Verification</a>
+            <div class="nav-links">
+                <a href="/admin?key=<%= adminKey %>">Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="form-card">
+                <h1>Edit Invoice</h1>
+                <p class="form-description">Update the invoice and bank account details.</p>
+                
+                <form action="/admin/update/<%= invoice.id %>?key=<%= adminKey %>" method="POST" class="admin-form">
+                    <div class="form-group">
+                        <label for="invoice_number">Invoice Number *</label>
+                        <input 
+                            type="text" 
+                            id="invoice_number" 
+                            name="invoice_number" 
+                            value="<%= invoice.invoice_number %>"
+                            required
+                            pattern="[a-zA-Z0-9\-_]+"
+                            title="Only letters, numbers, hyphens, and underscores allowed"
+                        >
+                        <small>Unique identifier for the invoice</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bank_name">Bank Name *</label>
+                        <input 
+                            type="text" 
+                            id="bank_name" 
+                            name="bank_name" 
+                            value="<%= invoice.bank_name %>"
+                            required
+                        >
+                        <small>Full name of the bank</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bank_account_number">Bank Account Number *</label>
+                        <input 
+                            type="text" 
+                            id="bank_account_number" 
+                            name="bank_account_number" 
+                            value="<%= invoice.bank_account_number %>"
+                            required
+                        >
+                        <small>Account number for wire transfer</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="beneficiary_name">Beneficiary Name (Optional)</label>
+                        <input 
+                            type="text" 
+                            id="beneficiary_name" 
+                            name="beneficiary_name" 
+                            value="<%= invoice.beneficiary_name || '' %>"
+                        >
+                        <small>Name of the account holder</small>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Update Invoice</button>
+                        <a href="/admin?key=<%= adminKey %>" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Invoice Bank Verification System - Admin Panel</p>
+        </div>
+    </footer>
+</body>
+</html>

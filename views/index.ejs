@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">🏦 Invoice Verification</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="hero-section">
+            <div class="container">
+                <h1 class="hero-title">Invoice Bank Verification</h1>
+                <p class="hero-subtitle">Verify bank account details for international wire transfers</p>
+                
+                <div class="search-card">
+                    <h2>Search Invoice</h2>
+                    <p class="search-description">Enter an invoice number to verify the associated bank account details</p>
+                    
+                    <form action="/verify" method="GET" class="search-form">
+                        <div class="form-group">
+                            <label for="invoice">Invoice Number</label>
+                            <input 
+                                type="text" 
+                                id="invoice" 
+                                name="invoice" 
+                                placeholder="e.g., INV-2025-001" 
+                                required
+                                pattern="[a-zA-Z0-9\-_]+"
+                                title="Only letters, numbers, hyphens, and underscores allowed"
+                            >
+                        </div>
+                        <button type="submit" class="btn btn-primary">Verify Invoice</button>
+                    </form>
+                </div>
+
+                <div class="info-cards">
+                    <div class="info-card">
+                        <div class="info-icon">🔒</div>
+                        <h3>Secure</h3>
+                        <p>All verification requests are logged and encrypted</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">⚡</div>
+                        <h3>Fast</h3>
+                        <p>Instant verification results in milliseconds</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">✓</div>
+                        <h3>Reliable</h3>
+                        <p>Prevent wire transfer fraud with verified data</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Invoice Bank Verification System. Secure wire transfer verification.</p>
+        </div>
+    </footer>
+</body>
+</html>

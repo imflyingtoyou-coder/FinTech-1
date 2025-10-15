@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">🏦 Invoice Verification</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="result-card">
+                <% if (found) { %>
+                    <div class="result-header success">
+                        <div class="status-icon">✓</div>
+                        <h1>Invoice Verified</h1>
+                    </div>
+                    
+                    <div class="result-body">
+                        <p class="result-message">The following bank account details are registered for this invoice:</p>
+                        
+                        <div class="detail-group">
+                            <label>Invoice Number</label>
+                            <div class="detail-value"><%= invoice.number %></div>
+                        </div>
+                        
+                        <div class="detail-group">
+                            <label>Bank Name</label>
+                            <div class="detail-value"><%= invoice.bankName %></div>
+                        </div>
+                        
+                        <div class="detail-group">
+                            <label>Bank Account Number</label>
+                            <div class="detail-value account-number"><%= invoice.accountNumber %></div>
+                        </div>
+                        
+                        <% if (invoice.beneficiary) { %>
+                        <div class="detail-group">
+                            <label>Beneficiary Name</label>
+                            <div class="detail-value"><%= invoice.beneficiary %></div>
+                        </div>
+                        <% } %>
+                        
+                        <div class="alert alert-success">
+                            <strong>✓ Verified:</strong> This bank account information has been verified and registered in our system.
+                        </div>
+                    </div>
+                <% } else { %>
+                    <div class="result-header error">
+                        <div class="status-icon">✗</div>
+                        <h1>Invoice Not Found</h1>
+                    </div>
+                    
+                    <div class="result-body">
+                        <p class="result-message">No bank account details found for invoice number:</p>
+                        <div class="detail-value not-found"><%= invoiceNumber %></div>
+                        
+                        <div class="alert alert-warning">
+                            <strong>⚠ Not Registered:</strong> This invoice number is not yet registered in our verification system. Please contact your supplier or check the invoice number.
+                        </div>
+                    </div>
+                <% } %>
+                
+                <div class="result-actions">
+                    <a href="/" class="btn btn-primary">Verify Another Invoice</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Invoice Bank Verification System. Secure wire transfer verification.</p>
+        </div>
+    </footer>
+</body>
+</html>
