@@ -1,4 +1,6 @@
 const { Pool } = require('pg');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
 
 // Create a connection pool
@@ -18,6 +20,39 @@ pool.on('connect', () => {
 pool.on('error', (err) => {
     console.error('Unexpected database error:', err);
 });
+
+// Initialize database tables
+async function initializeDatabase() {
+    try {
+        console.log('Checking database schema...');
+        
+        // Check if tables exist
+        const tableCheck = await pool.query(`
+            SELECT EXISTS (
+                SELECT FROM information_schema.tables 
+                WHERE table_name = 'invoices'
+            );
+        `);
+        
+        if (!tableCheck.rows[0].exists) {
+            console.log('Tables not found. Running migration...');
+            
+            // Read and execute schema file
+            const schemaPath = path.join(__dirname, 'schema.sql');
+            const schema = fs.readFileSync(schemaPath, 'utf8');
+            
+            await pool.query(schema);
+            
+            console.log('✓ Database tables created successfully');
+            console.log('✓ Tables: invoices, verification_logs');
+        } else {
+            console.log('✓ Database tables already exist');
+        }
+    } catch (error) {
+        console.error('✗ Database initialization error:', error.message);
+        throw error;
+    }
+}
 
 // Database query functions
 const db = {
@@ -88,7 +123,10 @@ const db = {
         const query = 'SELECT EXISTS(SELECT 1 FROM invoices WHERE invoice_number = $1)';
         const result = await pool.query(query, [invoiceNumber]);
         return result.rows[0].exists;
-    }
+    },
+
+    // Initialize database
+    initializeDatabase
 };
 
 module.exports = db;

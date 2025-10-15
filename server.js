@@ -14,6 +14,9 @@ const {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust proxy - required for Railway/Heroku/etc to get real client IP
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet({
     contentSecurityPolicy: {
@@ -248,9 +251,22 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`✓ Server running on port ${PORT}`);
-    console.log(`✓ Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`✓ Visit: http://localhost:${PORT}`);
-});
+// Start server with database initialization
+async function startServer() {
+    try {
+        // Initialize database tables
+        await db.initializeDatabase();
+        
+        // Start Express server
+        app.listen(PORT, () => {
+            console.log(`✓ Server running on port ${PORT}`);
+            console.log(`✓ Environment: ${process.env.NODE_ENV || 'development'}`);
+            console.log(`✓ Visit: http://localhost:${PORT}`);
+        });
+    } catch (error) {
+        console.error('✗ Failed to start server:', error);
+        process.exit(1);
+    }
+}
+
+startServer();
